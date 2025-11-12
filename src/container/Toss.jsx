@@ -48,6 +48,9 @@ function Toss({ match, onMatchComplete }) {
     const [team1Score, setTeam1Score] = useState(null);
     const [chasing, setChasing] = useState(false);
     const [matchResult, setMatchResult] = useState(null);
+    const [isClickable, setIsClickable] = useState(true);
+    const [showInningsPopup, setShowInningsPopup] = useState(false);
+    const [showChaseInfo, setShowChaseInfo] = useState(false);
 
     const toss = () => {
         if (!team[0] || !team[1]) {
@@ -78,7 +81,8 @@ function Toss({ match, onMatchComplete }) {
         return [...array].sort(() => Math.random() - 0.5)
     }
     const handleCards = (item) => {
-        if (gameOver) return;
+        if (gameOver || !isClickable) return;
+        setIsClickable(false);
         setScore((prev) => {
             let newRun = prev.runs;
             let newWicket = prev.wickets;
@@ -128,9 +132,13 @@ function Toss({ match, onMatchComplete }) {
                         newBall = 0;
                         newOver = 0;
                         setChasing(true);
-                        alert(`${tossWinningTeam}’s innings is over. Now it’s the other team’s turn to bat.`);
+                        // alert(`${tossWinningTeam}’s innings is over. Now it’s the other team’s turn to bat.`);
                         setTossWinningTeam(prevT => prevT === team[0] ? team[1] : team[0]);
                         // gameOver remains false
+                        setTimeout(() => {
+                            setShowInningsPopup(true);
+                            setShowChaseInfo(false);
+                        }, 2000);
                     } else {
                         // End of second innings by overs/wickets
                         isGameOver = true;
@@ -166,8 +174,9 @@ function Toss({ match, onMatchComplete }) {
         setFlippedId(item.id);
         setTimeout(() => {
             setCard(shuffledCards(card));
+            setIsClickable(true);
             setFlippedId(null);
-        }, 300);
+        }, 1000);
     };
 
     return (
@@ -175,7 +184,7 @@ function Toss({ match, onMatchComplete }) {
             {gameStarted ? (
                 <>
                     {gameOver && matchResult && (
-                        <div className="bg-gradient-to-r from-indigo-400 via-purple-400 to-blue-400 text-white rounded-lg p-6 mb-6 mx-24 text-center shadow-lg">
+                        <div className="bg-gradient-to-r from-indigo-400 via-purple-400 to-blue-400 text-white rounded-lg p-6 mb-6 md:mx-24 text-center shadow-lg">
                             <h2 className="text-3xl font-bold mb-2"> Game Over!</h2>
                             <p className="text-xl mb-2">
                                 Final Score: {score.runs}/{score.wickets} in {score.overs}.{score.balls} overs
@@ -183,82 +192,58 @@ function Toss({ match, onMatchComplete }) {
                             <h3 className="text-2xl font-semibold mt-2">{matchResult}</h3>
                         </div>
                     )}
-                    <div className="flex justify-between mx-24 bg-white rounded-md shadow-2xl p-3">
-                        <div className="flex gap-5">
-                            <div className="h-10 md:h-12 rounded-md px-3 bg-gradient-to-br from-accent to-orange-500 flex items-center justify-center shadow-lg">
-                                <span className="text-white text-2xl font-medium">
+                    <div className="grid grid-cols-2 md:grid-cols-4 md:mx-24 bg-white rounded-md shadow-2xl p-3">
+                        <div className="flex gap-2 order-1 md:gap-5">
+                            <div className="h-11 md:h-12 rounded-md px-3 bg-gradient-to-br from-accent to-orange-500 flex items-center justify-center shadow-lg">
+                                <span className="text-white text-base md:text-2xl font-medium">
                                     <h2>{tossWinningTeam}</h2>
                                 </span>
                             </div>
                             <div className="flex flex-col">
-                                <h2 className="text-lg font-bold"> {!firstInningsOver ? `${score.runs}/${score.wickets}` : `${team1Score.runs}/${team1Score.wickets}`}</h2>
+                                <h2 className="text-base md:text-lg font-bold"> {!firstInningsOver ? `${score.runs}/${score.wickets}` : `${team1Score.runs}/${team1Score.wickets}`}</h2>
                                 <p className="text-sm font-medium">{!firstInningsOver ? `${score.overs}.${score.balls}` : `${team1Score.overs}.${team1Score.balls}`}</p>
                             </div>
                         </div>
-                        {firstInningsOver && !gameOver && (
-                            <div className="flex justify-center items-center">
-                                <h2 className="text-base">{tossLosserTeam} needs {(team1Score?.runs + 1) - score.runs} run from {(30 - (score.overs * 6 + score.balls))} balls to win </h2>
-                            </div>
-                        )}
-                        <div className="flex gap-5">
+                        <div className="col-span-2 order-3 md:order-2">
+                            {firstInningsOver && !gameOver && showChaseInfo && (
+                                <div className="flex justify-center items-center">
+                                    <h2 className="md:text-base text-xs mx-5 mt-2">{tossLosserTeam} needs {(team1Score?.runs + 1) - score.runs} run from {(30 - (score.overs * 6 + score.balls))} balls to win </h2>
+                                </div>
+                            )}
+                        </div>
+                        <div className="flex justify-end gap-2 order-2 md:order-3 md:gap-5">
                             <div className="flex flex-col">
                                 <h2 className="text-lg font-bold "> {firstInningsOver ? `${score.runs}/${score.wickets}` : `0/0`}</h2>
                                 <p className="text-sm font-medium">{firstInningsOver ? `${score.overs}.${score.balls}` : `0.0`}</p>
                             </div>
-                            <div className="h-10 md:h-12 px-3 rounded-md bg-gradient-to-br from-accent to-black flex items-center justify-center shadow-lg">
-                                <span className="text-white text-2xl font-medium">
+                            <div className="h-11 md:h-12 px-3 rounded-md bg-gradient-to-br from-accent to-black flex items-center justify-center shadow-lg">
+                                <span className="text-white text-base md:text-2xl font-medium">
                                     <h2>{tossLosserTeam}</h2>
                                 </span>
                             </div>
                         </div>
                     </div>
-                    {/* <div className="flex justify-center gap-4 my-5">
-                        <div
-                            className="rounded-md shadow-2xl py-3 w-64 flex flex-col items-center bg-white"
-                        >
-                            <h2 className="text-xl font-bold ">{score.runs}</h2>
-                            <p>Total Run</p>
-                        </div>
-                        <div
-                            className="rounded-md shadow-2xl py-3 w-64 flex flex-col items-center bg-white"
-                        >
-                            <h2 className="text-xl font-bold ">{score.wickets}</h2>
-                            <p>Wicket</p>
-                        </div>
-                        <div
-                            className="rounded-md shadow-2xl py-3 w-64 flex flex-col items-center bg-white"
-                        >
-                            <h2 className="text-xl font-bold ">{score.balls}</h2>
-                            <p>Current Balls</p>
-                        </div>
-                        <div
-                            className="rounded-md shadow-2xl px-5 py-3 w-64 flex flex-col items-center bg-white"
-                        >
-                            <h2 className="text-xl font-bold ">{score.overs}.{score.balls}</h2>
-                            <p>Overs</p>
-                        </div>
-                    </div> */}
-                    <div className="grid md:grid-cols-8 gap-5 px-24 mt-5">
+                    <div className="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-5 md:px-24 mt-5">
                         {card.map((item) => (
                             <div
                                 key={item.id}
                                 className="flex justify-center items-center"
                                 onClick={() => handleCards(item)}
                             >
-                                <div className={`rounded-md shadow-2xl w-32 h-32 flex flex-col justify-center items-center text-white cursor-pointer bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 transition-transform transform`}>
+                                <div className={`rounded-md shadow-2xl w-20 h-20 sm:w-24 sm:h-24 md:w-32 md:h-32 flex flex-col justify-center items-center text-white cursor-pointer bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 transition-transform transform`}>
                                     <span className="text-4xl">
                                         {/* <MdSportsCricket /> */}
                                     </span>
-                                    <h2 className="text-2xl font-semibold text-center">
+                                    <h2 className="text-base md:text-2xl font-semibold text-center">
                                         {
-                                            flippedId === item.id ? item.label : <img src={cricketImage} className="w-32 h-32" alt="cricket" />}</h2>
+                                            flippedId === item.id ? item.label : <img src={cricketImage} className="w-20 h-20 sm:w-24 sm:h-24 md:w-32 md:h-32 rounded-md" alt="cricket" />}</h2>
                                 </div>
                             </div>
                         ))}
                     </div>
                 </>
             ) : (
-                <div className="grid grid-cols-2 gap-5">
+                <div className="md:grid grid-cols-2 gap-5">
                     <div className="border rounded-md p-4">
                         {team.length === 2 && (
                             <div className="flex items-center justify-center gap-10 mt-6">
@@ -292,7 +277,7 @@ function Toss({ match, onMatchComplete }) {
                         </div>
                     </div>
                     {tossDone && (
-                        <div className="border rounded-md p-4">
+                        <div className="border rounded-md p-4 mt-3 md:mt-0">
                             <div className="py-5">
                                 <p className="text-lg font-semibold text-green-600">
                                     {tossWinnerStatus} won the toss!
@@ -332,7 +317,7 @@ function Toss({ match, onMatchComplete }) {
                                     <p>{tossWinnerStatus} is selected to {choose === "batting" ? "bat" : "bowl"} first</p>
                                 )}
                                 <button
-                                    onClick={() => setGameStarted(true)}
+                                    onClick={() => { setGameStarted(true), setCard(shuffledCards(card)) }}
                                     disabled={!choose}
                                     className="mt-4 bg-green-600 text-white px-5 py-1 rounded-md cursor-pointer"
                                 >
@@ -343,6 +328,36 @@ function Toss({ match, onMatchComplete }) {
                     )}
                 </div>
 
+            )}
+            {showInningsPopup && (
+                <div className="fixed inset-0 flex justify-center items-start sm:items-center z-50 bg-black/30 backdrop-blur-sm transition-all duration-300">
+                    <div className="bg-white border border-green-500 rounded-2xl shadow-2xl w-[90%] sm:w-[70%] md:w-[50%] lg:w-[40%] text-center transform transition-all duration-300 scale-100 hover:scale-105 mx-3 my-3 sm:mx-0">
+
+                        {/* Content */}
+                        <div className="flex flex-col space-y-4 pt-6 px-4 sm:px-6">
+                            <h2 className="text-lg sm:text-xl md:text-2xl font-semibold text-green-700">
+                                First Innings Completed!
+                            </h2>
+                            <p className="text-gray-700 text-sm sm:text-base leading-relaxed">
+                                <span className="font-semibold text-green-600">{tossWinningTeam}</span>’s innings is complete.
+                                Now it’s time for the opponent to take the chase!
+                            </p>
+                        </div>
+
+                        {/* Button Section */}
+                        <div className="flex justify-end p-4">
+                            <button
+                                onClick={() => {
+                                    setShowInningsPopup(false);
+                                    setShowChaseInfo(true);
+                                }}
+                                className="mt-2 sm:mt-4 bg-green-500 text-white font-medium px-5 sm:px-6 py-1.5 sm:py-2 rounded-lg shadow-md transition-all duration-300 hover:shadow-lg hover:bg-green-600 active:scale-95"
+                            >
+                                OK
+                            </button>
+                        </div>
+                    </div>
+                </div>
             )}
         </div>
     );
