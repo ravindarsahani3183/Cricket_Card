@@ -80,20 +80,16 @@ function Battle() {
   const handleChoose = (select) => {
     setChoose(select);
 
-    // Use the toss winner state and tossLoser state explicitly
-    // (tossWinnerStatus and tossLoser are state variables)
     if (select === "batting") {
-      // toss winner will bat
-      setBattingTeam(tossWinnerStatus || battingTeam); // fallback to previous if not set
+      setBattingTeam(battingTeam);
       setLTossLoser(tossLoser);
     } else if (select === "bowling") {
-      // toss loser will bat
-      setBattingTeam(tossLoser || battingTeam);
-      setLTossLoser(tossWinnerStatus);
+      setBattingTeam(tossLoser);
+      setLTossLoser(battingTeam);
     }
 
-    console.log("batting:", select === "batting" ? (tossWinnerStatus || battingTeam) : tossLoser);
-    console.log("bowling:", select === "batting" ? tossLoser : (tossWinnerStatus || battingTeam));
+    console.log("batting:", select === "batting" ? battingTeam : tossLoser);
+    console.log("bowling:", select === "batting" ? tossLoser : battingTeam);
   };
 
   const shuffledCards = (array) => {
@@ -104,13 +100,13 @@ function Battle() {
 
     setIsClickable(false);
 
-    if (item.type === "run") {
-      speakText(`${item.value} runs`)
-    } else if (item.type === "wicket") {
-      speakText(`${item.label}`)
-    } else if (item.type === "extra") {
-      speakText(`${item.label}`)
-    }
+     if (item.type === "run") {
+            speakText(`${item.value} runs`)
+        } else if (item.type === "wicket") {
+            speakText(`${item.label}`)
+        } else if (item.type === "extra") {
+            speakText(`${item.label}`)
+        }
     setScore((prev) => {
       let newRun = prev.runs;
       let newWicket = prev.wickets;
@@ -193,7 +189,7 @@ function Battle() {
     });
     setFlippedId(item.id);
     setTimeout(() => {
-      setCard(shuffledCards(cardTypes));
+      setCard(shuffledCards(card));
       setFlippedId(null);
       setIsClickable(true);
     }, 1300);
@@ -201,7 +197,7 @@ function Battle() {
 
   const restart = () => {
     setScore({ runs: 0, wickets: 0, balls: 0, overs: 0 });
-    setCard(shuffledCards(cardTypes));
+    setCard(shuffledCards(card));
     setFlippedId(null);
     setGameOver(false);
     setGameStarted(false);
@@ -260,7 +256,7 @@ function Battle() {
             </div>
             <div className="flex justify-end gap-2 order-2 md:order-3 md:gap-5">
               <div className="flex flex-col">
-                <h2 className="text-lg font-bold"> {firstInningsOver ? `${score.runs}/${score.wickets}` : `0/0`}</h2>
+                <h2 className="text-lg font-bold "> {firstInningsOver ? `${score.runs}/${score.wickets}` : `0/0`}</h2>
                 <p className="text-sm font-medium">{firstInningsOver ? `${score.overs}.${score.balls}` : `0.0`}</p>
               </div>
               <div className="h-10 md:h-11 px-3 rounded-md bg-gradient-to-br from-accent to-black flex items-center justify-center shadow-lg">
