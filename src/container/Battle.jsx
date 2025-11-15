@@ -80,16 +80,20 @@ function Battle() {
   const handleChoose = (select) => {
     setChoose(select);
 
+    // Use the toss winner state and tossLoser state explicitly
+    // (tossWinnerStatus and tossLoser are state variables)
     if (select === "batting") {
-      setBattingTeam(battingTeam);
+      // toss winner will bat
+      setBattingTeam(tossWinnerStatus || battingTeam); // fallback to previous if not set
       setLTossLoser(tossLoser);
     } else if (select === "bowling") {
-      setBattingTeam(tossLoser);
-      setLTossLoser(battingTeam);
+      // toss loser will bat
+      setBattingTeam(tossLoser || battingTeam);
+      setLTossLoser(tossWinnerStatus);
     }
 
-    console.log("batting:", select === "batting" ? battingTeam : tossLoser);
-    console.log("bowling:", select === "batting" ? tossLoser : battingTeam);
+    console.log("batting:", select === "batting" ? (tossWinnerStatus || battingTeam) : tossLoser);
+    console.log("bowling:", select === "batting" ? tossLoser : (tossWinnerStatus || battingTeam));
   };
 
   const shuffledCards = (array) => {
@@ -100,13 +104,13 @@ function Battle() {
 
     setIsClickable(false);
 
-     if (item.type === "run") {
-            speakText(`${item.value} runs`)
-        } else if (item.type === "wicket") {
-            speakText(`${item.label}`)
-        } else if (item.type === "extra") {
-            speakText(`${item.label}`)
-        }
+    if (item.type === "run") {
+      speakText(`${item.value} runs`)
+    } else if (item.type === "wicket") {
+      speakText(`${item.label}`)
+    } else if (item.type === "extra") {
+      speakText(`${item.label}`)
+    }
     setScore((prev) => {
       let newRun = prev.runs;
       let newWicket = prev.wickets;
@@ -189,7 +193,7 @@ function Battle() {
     });
     setFlippedId(item.id);
     setTimeout(() => {
-      setCard(shuffledCards(card));
+      setCard(shuffledCards(cardTypes));
       setFlippedId(null);
       setIsClickable(true);
     }, 1300);
@@ -197,7 +201,7 @@ function Battle() {
 
   const restart = () => {
     setScore({ runs: 0, wickets: 0, balls: 0, overs: 0 });
-    setCard(shuffledCards(card));
+    setCard(shuffledCards(cardTypes));
     setFlippedId(null);
     setGameOver(false);
     setGameStarted(false);
