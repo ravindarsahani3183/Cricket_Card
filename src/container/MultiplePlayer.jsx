@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Toss from "./Toss";
 import { FaTrophy } from "react-icons/fa";
 import { HiSparkles } from "react-icons/hi";
 import Triseries from '/src/assets/Tri-series.jpg';
+import celebrationSound from "/src/assets/celebration.mp3";
 function MultiplePlayer() {
   const [teams, setTeams] = useState([]);
   const [input, setInput] = useState("");
@@ -13,6 +14,8 @@ function MultiplePlayer() {
   const [semiResult, setSemiResult] = useState(null);
   const [champion, setChampion] = useState(null);
   const [showChampionPopup, setShowChampionPopup] = useState(false);
+
+  const celebrationAudio = useRef(new Audio(celebrationSound));
 
   const addTeam = () => {
     if (input.trim() !== "" && teams.length < 3) {
@@ -67,6 +70,7 @@ function MultiplePlayer() {
     } else if (match.stage === "final") {
       setChampion(winner);
       setShowChampionPopup(true);
+      celebrationAudio.current.play().catch(() => { });
     }
     handleBackToTournament();
   };
@@ -104,8 +108,10 @@ function MultiplePlayer() {
               setSemiResult(null);
               setChampion(null);
               setShowChampionPopup(false);
+              celebrationAudio.current.pause();
+                celebrationAudio.current.currentTime = 0;
             }}
-            className="bg-green-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-green-700 transition-colors"
+            className="bg-green-600 text-white px-6 py-2 cursor-pointer rounded-lg font-semibold hover:bg-green-700 transition-colors"
           >
             New Tournament
           </button>

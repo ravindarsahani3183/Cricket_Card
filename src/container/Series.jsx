@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { FaTrophy } from "react-icons/fa";
 import { HiSparkles } from "react-icons/hi";
 import SeriesMatch from "./SeriesMatch";
 import series from "/src/assets/series.jpg";
+import celebrationSound from "/src/assets/celebration.mp3";
 
 function Series() {
   const [teams, setTeams] = useState([]);
@@ -13,6 +14,11 @@ function Series() {
   const [matchResults, setMatchResults] = useState([]);
   const [seriesWinner, setSeriesWinner] = useState(null);
   const [showWinnerPopup, setShowWinnerPopup] = useState(false);
+
+  const celebrationAudio = useRef(new Audio(celebrationSound));
+
+  // ✅ Ref for match section to scroll into view
+  const matchSectionRef = useRef(null);
 
   const addHandle = () => {
     if (input.trim() !== "" && teams.length < 2) {
@@ -53,16 +59,23 @@ function Series() {
       if (team1Wins === requiredWins) {
         setSeriesWinner(teams[0]);
         setShowWinnerPopup(true);
+        celebrationAudio.current.play().catch(() => { });
       }
       if (team2Wins === requiredWins) {
         setSeriesWinner(teams[1]);
         setShowWinnerPopup(true);
+        celebrationAudio.current.play().catch(() => { });
       }
 
       return updated;
     });
 
     setShowMatchPlay(false);
+
+    // 👇 Scroll to match section
+    setTimeout(() => {
+      matchSectionRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 300);
   };
 
   const resetSeries = () => {
@@ -73,6 +86,8 @@ function Series() {
     setMatchResults([]);
     setSeriesWinner(null);
     setShowWinnerPopup(false);
+    celebrationAudio.current.pause();
+    celebrationAudio.current.currentTime = 0;
   };
 
   return (
@@ -179,7 +194,7 @@ function Series() {
 
           {/* Match List */}
           {selectedMatches && (
-            <div>
+            <div ref={matchSectionRef}>
               <h3 className="text-xl text-green-900 font-semibold mb-3 text-start">
                 {selectedMatches}-Match Series
               </h3>
@@ -195,39 +210,49 @@ function Series() {
                     <div
                       key={i}
                       onClick={() => handleMatchClick(i)}
-                      className={`bg-white border border-green-700 shadow-lg rounded-xl p-6 text-center transition-all transform ${isPlayed || seriesWinner
-                          ? "cursor-not-allowed opacity-70"
+                      className={`relative p-6 rounded-2xl border-2 shadow-lg text-center transform transition-all duration-300
+                      ${isPlayed
+                          ? "bg-gradient-to-br from-green-100 via-green-200 to-green-50 border-red-200 shadow-green-200 cursor-not-allowed"
                           : isNextMatch
-                            ? "cursor-pointer hover:border-blue-300 hover:shadow-xl hover:scale-105"
-                            : "cursor-not-allowed opacity-50"
+                            ? "bg-gradient-to-br from-blue-50 via-white to-blue-100 border-blue-400 cursor-pointer hover:shadow-blue-400 hover:scale-105 animate-pulse-slow"
+                            : "bg-gray-100 border-gray-300 cursor-not-allowed opacity-70 backdrop-blur-sm shadow-inner"
                         }`}
                     >
-                      <div className="text-lg font-semibold text-green-800">
-                        {teams[0]}{" "}
-                        <span className="text-gray-500 mx-2">vs</span>
-                        {teams[1]}
-                      </div>
-                      <div className="text-sm text-gray-500 mt-2">
-                        Match {i + 1}
-                      </div>
-
-                      {result ? (
-                        <div className="text-green-600 font-medium mt-2">
-                          🏆 {result.winner}
-                          <br />
-                          <span className="text-gray-600 text-sm">
-                            {result.result}
-                          </span>
-                        </div>
-                      ) : isNextMatch ? (
-                        <div className="text-xs text-green-600 mt-2">
-                          Click to play match
-                        </div>
-                      ) : (
-                        <div className="text-xs text-gray-400 mt-2">
-                          🔒 Locked
-                        </div>
+                      {isPlayed && (
+                        <div className="absolute inset-0 rounded-2xl border-4 border-green-300 opacity-30 animate-glow-green"></div>
                       )}
+                      {isNextMatch && (
+                        <div className="absolute inset-0 rounded-2xl border-4 border-blue-300 opacity-20 animate-glow-blue"></div>
+                      )}
+
+                      <div className="relative z-10">
+                        <div className="text-lg font-semibold text-green-800">
+                          {teams[0]}{" "}
+                          <span className="text-gray-500 mx-2">vs</span>{" "}
+                          {teams[1]}
+                        </div>
+                        <div className="text-sm text-gray-500 mt-2">
+                          Match {i + 1}
+                        </div>
+
+                        {result ? (
+                          <div className="text-red-700 font-medium mt-3">
+                            🏆 {result.winner}
+                            <br />
+                            <span className="text-red-700 text-sm">
+                              {result.result}
+                            </span>
+                          </div>
+                        ) : isNextMatch ? (
+                          <div className="text-sm text-blue-700 mt-3 font-medium">
+                            ✨ Click to play this match
+                          </div>
+                        ) : (
+                          <div className="text-sm text-gray-500 mt-3 flex items-center justify-center gap-1">
+                            🔒 Locked
+                          </div>
+                        )}
+                      </div>
                     </div>
                   );
                 })}
@@ -282,7 +307,7 @@ function Series() {
               <div className="flex justify-center gap-4">
                 <button
                   onClick={resetSeries}
-                  className="bg-green-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-green-700 transition-colors"
+                  className="bg-green-600 text-white px-6 py-2 cursor-pointer rounded-lg font-semibold hover:bg-green-700 transition-colors"
                 >
                   New Series
                 </button>

@@ -1,20 +1,16 @@
 import React, { useState } from "react";
-import cricketImage from '/src/assets/cricket.png';
-import battle from '/src/assets/battle.jpg';
-import tournament from '/src/assets/tournament.jpg';
-import series from '/src/assets/series.jpg';
-import Triseries from '/src/assets/Tri-series.jpg';
-import { BsTrophy } from "react-icons/bs";
-import { Link } from "react-router-dom";
+// import cricketImage from '/src/assets/cricket.png';
+import cricketImage from '/src/assets/download (1).jpg';
+import battle from '/src/assets/twoplayer.jpeg';
 
 function Battle() {
   const cardTypes = [
-    { id: 1, label: "0", value: 0, type: "run", isFlipped: false },
-    { id: 2, label: "1", value: 1, type: "run", isFlipped: false },
-    { id: 3, label: "2", value: 2, type: "run", isFlipped: false },
-    { id: 4, label: "3", value: 3, type: "run", isFlipped: false },
-    { id: 5, label: "4", value: 4, type: "run", isFlipped: false },
-    { id: 6, label: "6", value: 6, type: "run", isFlipped: false },
+    { id: 1, label: "0 Run", value: 0, type: "run", isFlipped: false },
+    { id: 2, label: "1 Run", value: 1, type: "run", isFlipped: false },
+    { id: 3, label: "2 Run", value: 2, type: "run", isFlipped: false },
+    { id: 4, label: "3 Run", value: 3, type: "run", isFlipped: false },
+    { id: 5, label: "4 Run", value: 4, type: "run", isFlipped: false },
+    { id: 6, label: "6 Run", value: 6, type: "run", isFlipped: false },
     { id: 7, label: "Wide", value: 1, type: "extra", isFlipped: false },
     { id: 8, label: "No Ball", value: 1, type: "extra", isFlipped: false },
     { id: 9, label: "0 Run", value: 0, type: "run", isFlipped: false },
@@ -58,7 +54,16 @@ function Battle() {
   const [showInningsPopup, setShowInningsPopup] = useState(false);
   const [showChaseInfo, setShowChaseInfo] = useState(false);
 
-
+  const speakText = (text) => {
+    if ("speechSynthesis" in window) {
+      const utterance = new SpeechSynthesisUtterance(text); // pass the text here
+      utterance.rate = 1;
+      utterance.pitch = 1;
+      window.speechSynthesis.speak(utterance);
+    } else {
+      console.warn("Speech Synthesis not supported in this browser");
+    }
+  }
 
   const handleToss = () => {
     if (!team1 || !team2) {
@@ -94,6 +99,14 @@ function Battle() {
     if (gameOver || !isClickable) return; // prevent click when game over or locked
 
     setIsClickable(false);
+
+     if (item.type === "run") {
+            speakText(`${item.value} runs`)
+        } else if (item.type === "wicket") {
+            speakText(`${item.label}`)
+        } else if (item.type === "extra") {
+            speakText(`${item.label}`)
+        }
     setScore((prev) => {
       let newRun = prev.runs;
       let newWicket = prev.wickets;
@@ -147,7 +160,7 @@ function Battle() {
             setTimeout(() => {
               setShowInningsPopup(true);
               setShowChaseInfo(false);
-            }, 2000);
+            }, 1300);
 
           } else {
             // End of second innings by overs/wickets
@@ -179,7 +192,7 @@ function Battle() {
       setCard(shuffledCards(card));
       setFlippedId(null);
       setIsClickable(true);
-    }, 2000);
+    }, 1300);
   };
 
   const restart = () => {
@@ -331,7 +344,7 @@ function Battle() {
                   <p className="text-gray-700 mb-3">Choose to bat or bowl first:</p>
                   <div className="flex flex-wrap gap-4 my-4">
                     <button
-                      className={`rounded-md px-5 py-2 text-white text-sm font-medium transition-all duration-300 ${choose
+                      className={`rounded-md px-5 py-2 text-white text-sm font-medium cursor-pointer transition-all duration-300 ${choose
                         ? choose === "batting"
                           ? "bg-green-500 cursor-not-allowed"
                           : "bg-gray-300 cursor-not-allowed"
@@ -344,7 +357,7 @@ function Battle() {
                     </button>
 
                     <button
-                      className={`rounded-md px-5 py-2 text-white text-sm font-medium transition-all duration-300 ${choose
+                      className={`rounded-md px-5 py-2 text-white text-sm font-medium cursor-pointer transition-all duration-300 ${choose
                         ? choose === "bowling"
                           ? "bg-green-500 cursor-not-allowed"
                           : "bg-gray-300 cursor-not-allowed"
@@ -370,7 +383,7 @@ function Battle() {
                   <button
                     onClick={() => setGameStarted(true)}
                     disabled={!choose}
-                    className={`mt-5 bg-green-600 text-white px-6 py-2 rounded-md font-medium transition-all duration-300 ${!choose ? "opacity-50 cursor-not-allowed" : "hover:bg-green-700"
+                    className={`mt-5 bg-green-600 text-white px-6 py-2 cursor-pointer rounded-md font-medium transition-all duration-300 ${!choose ? "opacity-50 cursor-not-allowed" : "hover:bg-green-700"
                       }`}
                   >
                     Start Match
@@ -398,96 +411,6 @@ function Battle() {
               </ul>
             </div>
           </div>
-          {/* <div className={`flex ${tossDone ? "justify-center mx-24" : "justify-center"}`}>
-            <div className="flex flex-col gap-3 items-center my-5">
-              <div>
-                <div className="flex gap-5 items-center justify-center">
-                  <span className="text-yellow-800">
-                    <BsTrophy size={30} />
-                  </span>
-                  <h2 className="text-4xl">Cricket Card Game</h2>
-                </div>
-                <h2 className="flex justify-center text-lg font-light">
-                  Click on cards to play cricket! Score runs or get out!
-                </h2>
-              </div>
-              <div>
-                <div className="flex flex-col gap-4 items-center">
-                  <input
-                    type="text"
-                    placeholder="Team 1 Name"
-                    value={team1}
-                    onChange={(e) => setTeam1(e.target.value)}
-                    className="border px-4 py-1 rounded-md w-64"
-                  />
-                  <input
-                    type="text"
-                    placeholder="Team 2 Name"
-                    value={team2}
-                    onChange={(e) => setTeam2(e.target.value)}
-                    className="border px-4 py-1 rounded-md w-64"
-                  />
-                  <button
-                    onClick={handleToss}
-                    disabled={tossDone}
-                    className={`text-white rounded-md px-4 py-1 ${tossDone ? "bg-purple-300 cursor-not-allowed" : "bg-purple-600 cursor-pointer"}`}
-                  >
-                    Toss
-                  </button>
-                </div>
-              </div>
-            </div>
-            {tossDone && (
-              <>
-                <div className="border-l border-black mx-10 px-10 py-5">
-                  <p className="text-lg font-semibold text-green-600">
-                    {tossWinnerStatus} won the toss!
-                  </p>
-                  <p>Choose to bat or bowl first:</p>
-                  <div className="flex gap-5 my-5">
-                    <button
-                      className={`rounded-md px-5 py-1 text-white text-sm cursor-pointer 
-                                            ${choose
-                          ? choose === "batting"
-                            ? "bg-green-500 cursor-not-allowed"
-                            : "bg-gray-300 cursor-not-allowed"
-                          : "bg-gray-500 hover:bg-green-500"
-                        }`}
-                      onClick={() => handleChoose("batting")}
-                      disabled={!!choose}
-                    >
-                      Batting
-                    </button>
-
-                    <button
-                      className={`rounded-md px-5 py-1 text-white text-sm cursor-pointer 
-                                            ${choose
-                          ? choose === "bowling"
-                            ? "bg-green-500 cursor-not-allowed"
-                            : "bg-gray-300 cursor-not-allowed"
-                          : "bg-gray-500 hover:bg-green-500"
-                        }`}
-                      onClick={() => handleChoose("bowling")}
-                      disabled={!!choose}
-                    >
-                      Bowling
-                    </button>
-                  </div>
-
-                  {choose && (
-                    <p>{tossWinnerStatus} is selected to {choose === "batting" ? "bat" : "bowl"} first</p>
-                  )}
-                  <button
-                    onClick={() => setGameStarted(true)}
-                    disabled={!choose}
-                    className="mt-4 bg-green-600 text-white px-5 py-1 rounded-md cursor-pointer"
-                  >
-                    Start Match
-                  </button>
-                </div>
-              </>
-            )}
-          </div> */}
         </div>
       )}
       {showInningsPopup && (

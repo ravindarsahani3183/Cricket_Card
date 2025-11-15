@@ -1,8 +1,9 @@
-import { useState } from "react"
+import { useRef, useState } from "react"
 import Toss from "./Toss"
 import { FaTrophy } from "react-icons/fa";
 import { HiSparkles } from "react-icons/hi";
 import tournament from '/src/assets/tournament.jpg';
+import celebrationSound from "/src/assets/celebration.mp3";
 
 function Tournament() {
   const [teams, setTeams] = useState([])
@@ -17,6 +18,8 @@ function Tournament() {
   const [semiResults, setSemiResults] = useState([])
   const [champion, setChampion] = useState(null)
   const [showChampionPopup, setShowChampionPopup] = useState(false)
+
+  const celebrationAudio = useRef(new Audio(celebrationSound));
 
   const addTeam = () => {
     if (input.trim() !== "" && teams.length < 8) {
@@ -96,6 +99,7 @@ function Tournament() {
       setChampion(winner)
       setCurrentStage("champion")
       setShowChampionPopup(true)
+      celebrationAudio.current.play().catch(() => { });
     }
 
     handleBackToTournament()
@@ -137,6 +141,8 @@ function Tournament() {
             <button
               onClick={() => {
                 // Reset tournament
+                celebrationAudio.current.pause();
+                celebrationAudio.current.currentTime = 0;
                 setTeams([])
                 setQuarterFinals([])
                 setSemiFinals([])
@@ -147,7 +153,7 @@ function Tournament() {
                 setCurrentStage("setup")
                 setShowChampionPopup(false)
               }}
-              className="bg-green-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-green-700 transition-colors"
+              className="bg-green-600 text-white px-6 py-2 cursor-pointer rounded-lg font-semibold hover:bg-green-700 transition-colors"
             >
               New Tournament
             </button>
@@ -242,7 +248,7 @@ function Tournament() {
                   />
                   <button
                     onClick={addTeam}
-                    className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors shadow-md hover:shadow-lg font-medium"
+                    className="bg-green-600 text-white px-6 py-2 cursor-pointer rounded-lg hover:bg-green-700 transition-colors shadow-md hover:shadow-lg font-medium"
                   >
                     Add
                   </button>
@@ -287,7 +293,7 @@ function Tournament() {
                   </li>
                   <li className="flex items-center gap-2">
                     <span className="w-2 h-2 bg-green-600 rounded-full"></span>
-                     4 teams participate in the semifinals, and 2 will qualify for the final; the other 2 are knocked out.
+                    4 teams participate in the semifinals, and 2 will qualify for the final; the other 2 are knocked out.
                   </li>
                   <li className="flex items-center gap-2">
                     <span className="w-2 h-2 bg-green-600 rounded-full"></span>
@@ -321,7 +327,7 @@ function Tournament() {
                       key={i}
                       onClick={() => !isCompleted && handleMatchClick(m)}
                       className={`bg-white border-2 shadow-lg rounded-xl p-6 text-center transition-all transform ${isCompleted
-                        ? "border-green-300 bg-green-50 cursor-default"
+                        ? "border-red-300 bg-green-50 cursor-default"
                         : "border-gray-200 cursor-pointer hover:shadow-xl hover:border-blue-300 hover:scale-105"
                         }`}
                     >
@@ -330,7 +336,7 @@ function Tournament() {
                       </div>
                       {m.group && <div className="text-sm text-gray-500 mt-2">Group {m.group}</div>}
                       {isCompleted ? (
-                        <div className="text-sm text-green-600 mt-2 font-semibold">
+                        <div className="text-sm text-red-600 mt-2 font-semibold">
                           Winner:{" "}
                           {m.stage === "quarterfinals"
                             ? quarterResults.find((r) => r.matchId === m.id)?.winner

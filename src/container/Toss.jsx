@@ -1,16 +1,22 @@
 import React, { useState } from "react";
 import cricketImage from '/src/assets/download (1).jpg';
-import { BsTrophy } from "react-icons/bs";
-
+import pitch from "/src/assets/pitch.jpg";
 function Toss({ match, onMatchComplete }) {
     console.log(match)
+    let stageWords = match.stage
+        .replace(/(final)/i, ' $1')
+        .trim()
+        .split(" ")
+        .map(word => word.toLowerCase() === "final" ? "Final" : word);
+
+    let matchHeading = stageWords.map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')
     const cardTypes = [
-        { id: 1, label: "0", value: 0, type: "run", isFlipped: false },
-        { id: 2, label: "1", value: 1, type: "run", isFlipped: false },
-        { id: 3, label: "2", value: 2, type: "run", isFlipped: false },
-        { id: 4, label: "3", value: 3, type: "run", isFlipped: false },
-        { id: 5, label: "4", value: 4, type: "run", isFlipped: false },
-        { id: 6, label: "6", value: 6, type: "run", isFlipped: false },
+        { id: 1, label: "0 Run", value: 0, type: "run", isFlipped: false },
+        { id: 2, label: "1 Run", value: 1, type: "run", isFlipped: false },
+        { id: 3, label: "2 Run", value: 2, type: "run", isFlipped: false },
+        { id: 4, label: "3 Run", value: 3, type: "run", isFlipped: false },
+        { id: 5, label: "4 Run", value: 4, type: "run", isFlipped: false },
+        { id: 6, label: "6 Run", value: 6, type: "run", isFlipped: false },
         { id: 7, label: "Wide", value: 1, type: "extra", isFlipped: false },
         { id: 8, label: "No Ball", value: 1, type: "extra", isFlipped: false },
         { id: 9, label: "0 Run", value: 0, type: "run", isFlipped: false },
@@ -51,7 +57,19 @@ function Toss({ match, onMatchComplete }) {
     const [isClickable, setIsClickable] = useState(true);
     const [showInningsPopup, setShowInningsPopup] = useState(false);
     const [showChaseInfo, setShowChaseInfo] = useState(false);
+    const [showMatchInfo, setShowMatchInfo] = useState(true);
 
+
+    const speakText = (text) => {
+        if ("speechSynthesis" in window) {
+            const utterance = new SpeechSynthesisUtterance(text); // pass the text here
+            utterance.rate = 1;
+            utterance.pitch = 1;
+            window.speechSynthesis.speak(utterance);
+        } else {
+            console.warn("Speech Synthesis not supported in this browser");
+        }
+    }
     const toss = () => {
         if (!team[0] || !team[1]) {
             alert("Please enter both team names before the toss!");
@@ -64,6 +82,7 @@ function Toss({ match, onMatchComplete }) {
         setTossWinnerStatus(tossWinner)
         // console.log("Toss Winner:", tossWinner);
         setTossDone(true)
+        setShowMatchInfo(false);
     };
 
     const handleChoose = (select) => {
@@ -82,6 +101,14 @@ function Toss({ match, onMatchComplete }) {
     }
     const handleCards = (item) => {
         if (gameOver || !isClickable) return;
+
+        if (item.type === "run") {
+            speakText(`${item.value} runs`)
+        } else if (item.type === "wicket") {
+            speakText(`${item.label}`)
+        } else if (item.type === "extra") {
+            speakText(`${item.label}`)
+        }
         setIsClickable(false);
         setScore((prev) => {
             let newRun = prev.runs;
@@ -138,7 +165,7 @@ function Toss({ match, onMatchComplete }) {
                         setTimeout(() => {
                             setShowInningsPopup(true);
                             setShowChaseInfo(false);
-                        }, 2000);
+                        }, 1300);
                     } else {
                         // End of second innings by overs/wickets
                         isGameOver = true;
@@ -148,7 +175,7 @@ function Toss({ match, onMatchComplete }) {
                             winner = tossLosserTeam
                             newMatchResult = `${tossLosserTeam} wins by ${10 - newWicket} wicket(s)`;
                         } else if (newRun === target) {
-                            winner = tossWinningTeam;
+                            winner = tossWinnerStatus;
                             newMatchResult = `${winner} wins the match as they won the toss!`;
                         } else {
                             winner = tossWinningTeam
@@ -176,7 +203,7 @@ function Toss({ match, onMatchComplete }) {
             setCard(shuffledCards(card));
             setIsClickable(true);
             setFlippedId(null);
-        }, 1000);
+        }, 1300);
     };
 
     return (
@@ -243,89 +270,120 @@ function Toss({ match, onMatchComplete }) {
                     </div>
                 </>
             ) : (
-                <div className="md:grid grid-cols-2 gap-5">
-                    <div className="border rounded-md p-4">
-                        {team.length === 2 && (
-                            <div className="flex items-center justify-center gap-10 mt-6">
-                                <div className="flex flex-col">
-                                    <div className="w-14 h-14 md:w-16 md:h-16 rounded-md bg-gradient-to-br from-accent to-orange-500 flex items-center justify-center shadow-lg">
-                                        <span className="text-white text-2xl font-medium">
-                                            {team[0][0]}
-                                        </span>
-                                    </div>
-                                    <span className="text-center mt-2 underline">{team[0]}</span>
-                                </div>
-                                <span className="text-xl font-bold">Vs</span>
-                                <div className="flex flex-col">
-                                    <div className="w-14 h-14 md:w-16 md:h-16 rounded-md bg-gradient-to-br from-accent to-black flex items-center justify-center shadow-lg">
-                                        <span className="text-white text-2xl font-medium">
-                                            {team[1][0]}
-                                        </span>
-                                    </div>
-                                    <span className="text-center mt-2 underline">{team[1]}</span>
-                                </div>
-                            </div>
-                        )}
-                        <div className="flex justify-center mt-10">
-                            <button
-                                className={`text-white rounded-md px-4 py-1 my-4 w-50 ${tossDone ? "bg-blue-200 cursor-not-allowed" : "bg-blue-800 cursor-pointer"}`}
-                                onClick={toss}
-                                disabled={tossDone}
-                            >
-                                Toss
-                            </button>
+                <div className="md:grid grid-cols-2 gap-3">
+                    <div className="col-span-2">
+                        <h2 className="text-2xl font-semibold mx-2">
+                            {matchHeading} Match
+                        </h2>
+                    </div>
+                    <div className="relative w-full h-50 sm:h-60 md:h-[71%] rounded-2xl overflow-hidden shadow-2xl my-3 md:my-0">
+                        <img
+                            src={pitch}
+                            alt="Cricket Pitch"
+                            className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent flex flex-col justify-end p-5">
+                            <h2 className="text-white text-2xl font-semibold drop-shadow-md">Cricket Toss Time</h2>
+                            <p className="text-gray-200 text-sm">Every toss can change the game!</p>
                         </div>
                     </div>
-                    {tossDone && (
-                        <div className="border rounded-md p-4 mt-3 md:mt-0">
-                            <div className="py-5">
-                                <p className="text-lg font-semibold text-green-600">
-                                    {tossWinnerStatus} won the toss!
-                                </p>
-                                <p>Choose to bat or bowl first:</p>
-                                <div className="flex gap-5 my-5">
-                                    <button
-                                        className={`rounded-md px-5 py-1 text-white text-sm cursor-pointer 
-                                            ${choose
-                                                ? choose === "batting"
-                                                    ? "bg-green-500 cursor-not-allowed"
-                                                    : "bg-gray-300 cursor-not-allowed"
-                                                : "bg-gray-500 hover:bg-green-500"
-                                            }`}
-                                        onClick={() => handleChoose("batting")}
-                                        disabled={!!choose}
-                                    >
-                                        Batting
-                                    </button>
-
-                                    <button
-                                        className={`rounded-md px-5 py-1 text-white text-sm cursor-pointer 
-                                            ${choose
-                                                ? choose === "bowling"
-                                                    ? "bg-green-500 cursor-not-allowed"
-                                                    : "bg-gray-300 cursor-not-allowed"
-                                                : "bg-gray-500 hover:bg-green-500"
-                                            }`}
-                                        onClick={() => handleChoose("bowling")}
-                                        disabled={!!choose}
-                                    >
-                                        Bowling
-                                    </button>
+                    <div className="col-span-1 space-y-2">
+                        <div className="border border-green-500 bg-gradient-to-br from-syk-100 via-green-200 to-sky-50 rounded-md">
+                            {team.length === 2 && (
+                                <div className="flex items-center justify-around gap-16 mt-6">
+                                    <div className="flex flex-col">
+                                        <div className="w-14 h-14 md:w-16 md:h-16 rounded-md bg-gradient-to-br from-accent to-orange-500 flex items-center justify-center shadow-lg">
+                                            <span className="text-white text-2xl font-medium">
+                                                {team[0][0]}
+                                            </span>
+                                        </div>
+                                        <span className="text-center mt-2 underline">{team[0]}</span>
+                                    </div>
+                                    <span className="text-xl font-bold">Vs</span>
+                                    <div className="flex flex-col">
+                                        <div className="w-14 h-14 md:w-16 md:h-16 rounded-md bg-gradient-to-br from-accent to-black flex items-center justify-center shadow-lg">
+                                            <span className="text-white text-2xl font-medium">
+                                                {team[1][0]}
+                                            </span>
+                                        </div>
+                                        <span className="text-center mt-2 underline">{team[1]}</span>
+                                    </div>
                                 </div>
-
-                                {choose && (
-                                    <p>{tossWinnerStatus} is selected to {choose === "batting" ? "bat" : "bowl"} first</p>
-                                )}
+                            )}
+                            <div className="flex justify-center mt-5">
                                 <button
-                                    onClick={() => { setGameStarted(true), setCard(shuffledCards(card)) }}
-                                    disabled={!choose}
-                                    className="mt-4 bg-green-600 text-white px-5 py-1 rounded-md cursor-pointer"
+                                    className={`text-white rounded-md px-4 py-1 my-4 w-full mx-10 ${tossDone ? "bg-blue-200 cursor-not-allowed" : "bg-blue-800 cursor-pointer"}`}
+                                    onClick={toss}
+                                    disabled={tossDone}
                                 >
-                                    Start Match
+                                    Toss
                                 </button>
                             </div>
                         </div>
-                    )}
+                        {showMatchInfo && (
+                            <div className="border border-green-500 bg-gradient-to-br from-sky-100 via-green-200 to-sky-50 rounded-md px-4 py-6 mt-3 md:mt-0 flex items-center justify-center h-40 sm:h-48 md:h-30 lg:h-52 text-center">
+                                <div className="text-base sm:text-lg md:text-xl font-semibold text-green-600 flex flex-col">
+                                    <p>{matchHeading} Match between</p>
+                                    <div>
+                                        <span className="mx-1 text-blue-600">{match.team1}</span>
+                                        and
+                                        <span className="mx-1 text-blue-600">{match.team2}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                        )}
+                        {tossDone && (
+                            <div className="border border-green-500 bg-gradient-to-br from-syk-100 via-green-200 to-sky-50 rounded-md px-5 mt-3 md:mt-0">
+                                <div className="py-3">
+                                    <p className="text-lg font-semibold text-green-600 mb-2">
+                                        {tossWinnerStatus} won the toss!
+                                    </p>
+                                    <p>Choose to bat or bowl first:</p>
+                                    <div className="flex gap-5 my-3">
+                                        <button
+                                            className={`rounded-md px-5 py-1 text-white text-sm cursor-pointer 
+                                            ${choose
+                                                    ? choose === "batting"
+                                                        ? "bg-green-500 cursor-not-allowed"
+                                                        : "bg-gray-300 cursor-not-allowed"
+                                                    : "bg-gray-500 hover:bg-green-500"
+                                                }`}
+                                            onClick={() => handleChoose("batting")}
+                                            disabled={!!choose}
+                                        >
+                                            Batting
+                                        </button>
+
+                                        <button
+                                            className={`rounded-md px-5 py-1 text-white text-sm cursor-pointer 
+                                            ${choose
+                                                    ? choose === "bowling"
+                                                        ? "bg-green-500 cursor-not-allowed"
+                                                        : "bg-gray-300 cursor-not-allowed"
+                                                    : "bg-gray-500 hover:bg-green-500"
+                                                }`}
+                                            onClick={() => handleChoose("bowling")}
+                                            disabled={!!choose}
+                                        >
+                                            Bowling
+                                        </button>
+                                    </div>
+
+                                    {choose && (
+                                        <p>{tossWinnerStatus} is selected to {choose === "batting" ? "bat" : "bowl"} first</p>
+                                    )}
+                                    <button
+                                        onClick={() => { setGameStarted(true), setCard(shuffledCards(card)) }}
+                                        disabled={!choose}
+                                        className="mt-4 bg-green-600 text-white px-5 py-1 rounded-md cursor-pointer"
+                                    >
+                                        Start Match
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+                    </div>
                 </div>
 
             )}
@@ -351,7 +409,7 @@ function Toss({ match, onMatchComplete }) {
                                     setShowInningsPopup(false);
                                     setShowChaseInfo(true);
                                 }}
-                                className="mt-2 sm:mt-4 bg-green-500 text-white font-medium px-5 sm:px-6 py-1.5 sm:py-2 rounded-lg shadow-md transition-all duration-300 hover:shadow-lg hover:bg-green-600 active:scale-95"
+                                className="mt-2 sm:mt-4 bg-green-500 text-white cursor-pointer font-medium px-5 sm:px-6 py-1.5 sm:py-2 rounded-lg shadow-md transition-all duration-300 hover:shadow-lg hover:bg-green-600 active:scale-95"
                             >
                                 OK
                             </button>

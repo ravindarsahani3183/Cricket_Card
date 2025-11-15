@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import battle from '/src/assets/battle.jpg';
+import battle from '/src/assets/twoplayer.jpeg';
 import tournament from '/src/assets/tournament.jpg';
 import series from '/src/assets/series.jpg';
 import Triseries from '/src/assets/Tri-series.jpg';
@@ -23,18 +23,18 @@ function Home() {
       </div>
       <div className="text-center mt-2 md:mt-4">
         <div className="flex justify-center flex-wrap gap-3 md:gap-8 pt-2">
-          {/* Tournament */}
-          <Link to="/tournament" className="relative group">
+          
+           {/* Extra */}
+          <Link to="/battle" className="relative group">
             <img
-              src={tournament}
-              alt="Tournament"
+              src={battle}
+              alt="Battle"
               className="w-40 h-40 sm:w-50 sm:h-50 md:w-60 md:h-60 rounded-lg object-cover transition-transform duration-300 group-hover:scale-110 shadow-md"
             />
             <span className="absolute bottom-2 left-1/2 -translate-x-1/2 text-white text-sm sm:text-base md:text-lg font-semibold drop-shadow-md">
-              Tournament
+              Battle
             </span>
           </Link>
-
           {/* Series */}
           <Link to="/series" className="relative group">
             <img
@@ -59,17 +59,17 @@ function Home() {
             </span>
           </Link>
 
-          {/* Extra */}
-          <Link to="/battle" className="relative group">
+          {/* Tournament */}
+          <Link to="/tournament" className="relative group">
             <img
-              src={battle}
-              alt="Battle"
+              src={tournament}
+              alt="Tournament"
               className="w-40 h-40 sm:w-50 sm:h-50 md:w-60 md:h-60 rounded-lg object-cover transition-transform duration-300 group-hover:scale-110 shadow-md"
             />
             <span className="absolute bottom-2 left-1/2 -translate-x-1/2 text-white text-sm sm:text-base md:text-lg font-semibold drop-shadow-md">
-              Battle
+              Tournament
             </span>
-          </Link>
+          </Link>          
         </div>
       </div>
       <div className="flex flex-col bg-white rounded-md mx-5 sm:mx-10 md:mx-14 lg:mx-24 px-5 py-5 my-5">
@@ -84,6 +84,7 @@ function Home() {
           <li>Game ends when you lose 10 wickets or run out of cards</li>
           <li>The match is limited to 5 overs.</li>
           <li>Try to score as many runs as possible!</li>
+          <li>In case of a tie, the toss winner will be declared the winner of the match.</li>
         </ul>
       </div>
     </div>
