@@ -256,7 +256,7 @@ function Battle() {
             </div>
             <div className="flex justify-end gap-2 order-2 md:order-3 md:gap-5">
               <div className="flex flex-col">
-                <h2 className="text-lg font-bold "> {firstInningsOver ? `${score.runs}/${score.wickets}` : `0/0`}</h2>
+                <h2 className="text-lg font-bold"> {firstInningsOver ? `${score.runs}/${score.wickets}` : `0/0`}</h2>
                 <p className="text-sm font-medium">{firstInningsOver ? `${score.overs}.${score.balls}` : `0.0`}</p>
               </div>
               <div className="h-10 md:h-11 px-3 rounded-md bg-gradient-to-br from-accent to-black flex items-center justify-center shadow-lg">
