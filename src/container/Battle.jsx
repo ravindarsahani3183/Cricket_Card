@@ -279,7 +279,7 @@ function Battle() {
                   </span>
                   <h2 className="text-base md:text-2xl font-semibold text-center">
                     {
-                      flippedId === item.id ? item.label : <img src={cricketImage} className="w-20 h-20 sm:w-full sm:h-24 md:w-32 md:h-32" alt="cricket" />}</h2>
+                      flippedId === item.id ? item.label : <img src={cricketImage} className="w-20 h-20 sm:w-full rounded-md sm:h-24 md:w-32 md:h-32" alt="cricket" />}</h2>
                 </div>
               </div>
             ))}
