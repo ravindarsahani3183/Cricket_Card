@@ -77,20 +77,41 @@ function Battle() {
     setBattingTeam(tossWinner);
     setTossDone(true);
   };
+  // const handleChoose = (select) => {
+  //   setChoose(select);
+
+  //   if (select === "batting") {
+  //     setBattingTeam(battingTeam);
+  //     setLTossLoser(tossLoser);
+  //   } else if (select === "bowling") {
+  //     setBattingTeam(tossLoser);
+  //     setLTossLoser(battingTeam);
+  //   }
+
+  //   console.log("batting:", select === "batting" ? battingTeam : tossLoser);
+  //   console.log("bowling:", select === "batting" ? tossLoser : battingTeam);
+  // };
+
+
   const handleChoose = (select) => {
     setChoose(select);
 
+    const winner = tossWinnerStatus;
+    const loser = winner === team1 ? team2 : team1;
+
     if (select === "batting") {
-      setBattingTeam(battingTeam);
-      setLTossLoser(tossLoser);
-    } else if (select === "bowling") {
-      setBattingTeam(tossLoser);
-      setLTossLoser(battingTeam);
+      setBattingTeam(winner);
+      setLTossLoser(loser);
+    } else {
+      setBattingTeam(loser);
+      setLTossLoser(winner);
     }
 
-    console.log("batting:", select === "batting" ? battingTeam : tossLoser);
-    console.log("bowling:", select === "batting" ? tossLoser : battingTeam);
+    console.log("Batting:", select === "batting" ? winner : loser);
+    console.log("Bowling:", select === "batting" ? loser : winner);
   };
+
+
 
   const shuffledCards = (array) => {
     return [...array].sort(() => Math.random() - 0.5)
@@ -100,13 +121,13 @@ function Battle() {
 
     setIsClickable(false);
 
-     if (item.type === "run") {
-            speakText(`${item.value} runs`)
-        } else if (item.type === "wicket") {
-            speakText(`${item.label}`)
-        } else if (item.type === "extra") {
-            speakText(`${item.label}`)
-        }
+    if (item.type === "run") {
+      speakText(`${item.value} runs`)
+    } else if (item.type === "wicket") {
+      speakText(`${item.label}`)
+    } else if (item.type === "extra") {
+      speakText(`${item.label}`)
+    }
     setScore((prev) => {
       let newRun = prev.runs;
       let newWicket = prev.wickets;
