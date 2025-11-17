@@ -143,7 +143,7 @@ function Battle() {
 
       if (!isGameOver) {
         // If not yet terminated by target, check the normal ending conditions
-        if (newWicket >= 10 || newOver >= 5) {
+        if (newWicket >= 10 || newOver >= 1) {
           if (!firstInningsOver) {
             // End of first innings
             setFirstInningsOver(true);
@@ -155,7 +155,7 @@ function Battle() {
             newOver = 0;
             setChasing(true);
             // alert(`${battingTeam}’s innings is over. Now it’s the other team’s turn to bat.`);
-            setBattingTeam(prevT => prevT === team1 ? team2 : team1);
+            // setBattingTeam(prevT => prevT === team1 ? team2 : team1);
             setShowChaseInfo(false);
             setTimeout(() => {
               setShowInningsPopup(true);
