@@ -77,36 +77,19 @@ function Battle() {
     setBattingTeam(tossWinner);
     setTossDone(true);
   };
-  // const handleChoose = (select) => {
-  //   setChoose(select);
-
-  //   if (select === "batting") {
-  //     setBattingTeam(battingTeam);
-  //     setLTossLoser(tossLoser);
-  //   } else if (select === "bowling") {
-  //     setBattingTeam(tossLoser);
-  //     setLTossLoser(battingTeam);
-  //   }
-
-  //   console.log("batting:", select === "batting" ? battingTeam : tossLoser);
-  //   console.log("bowling:", select === "batting" ? tossLoser : battingTeam);
-  // };
-
   const handleChoose = (select) => {
-    if (!tossWinnerStatus || !tossLoser) return;
-
     setChoose(select);
 
     if (select === "batting") {
-      setBattingTeam(tossWinnerStatus); // explicitly use toss winner
-      setLTossLoser(tossLoser);         // explicitly use toss loser
+      setBattingTeam(battingTeam);
+      setLTossLoser(tossLoser);
     } else if (select === "bowling") {
-      setBattingTeam(tossLoser);        // toss loser bats
-      setLTossLoser(tossWinnerStatus);  // toss winner bowls
+      setBattingTeam(tossLoser);
+      setLTossLoser(battingTeam);
     }
 
-    console.log("Batting Team:", select === "batting" ? tossWinnerStatus : tossLoser);
-    console.log("Bowling Team:", select === "batting" ? tossLoser : tossWinnerStatus);
+    console.log("batting:", select === "batting" ? battingTeam : tossLoser);
+    console.log("bowling:", select === "batting" ? tossLoser : battingTeam);
   };
 
   const shuffledCards = (array) => {
@@ -117,13 +100,13 @@ function Battle() {
 
     setIsClickable(false);
 
-    if (item.type === "run") {
-      speakText(`${item.value} runs`)
-    } else if (item.type === "wicket") {
-      speakText(`${item.label}`)
-    } else if (item.type === "extra") {
-      speakText(`${item.label}`)
-    }
+     if (item.type === "run") {
+            speakText(`${item.value} runs`)
+        } else if (item.type === "wicket") {
+            speakText(`${item.label}`)
+        } else if (item.type === "extra") {
+            speakText(`${item.label}`)
+        }
     setScore((prev) => {
       let newRun = prev.runs;
       let newWicket = prev.wickets;
@@ -160,7 +143,7 @@ function Battle() {
 
       if (!isGameOver) {
         // If not yet terminated by target, check the normal ending conditions
-        if (newWicket >= 10 || newOver >= 1) {
+        if (newWicket >= 10 || newOver >= 5) {
           if (!firstInningsOver) {
             // End of first innings
             setFirstInningsOver(true);
@@ -172,13 +155,7 @@ function Battle() {
             newOver = 0;
             setChasing(true);
             // alert(`${battingTeam}’s innings is over. Now it’s the other team’s turn to bat.`);
-            // setBattingTeam(prevT => prevT === team1 ? team2 : team1);
-            setBattingTeam(prevT => {
-              const currentTeam1 = team1;
-              const currentTeam2 = team2;
-              return prevT === currentTeam1 ? currentTeam2 : currentTeam1;
-            });
-
+            setBattingTeam(prevT => prevT === team1 ? team2 : team1);
             setShowChaseInfo(false);
             setTimeout(() => {
               setShowInningsPopup(true);
