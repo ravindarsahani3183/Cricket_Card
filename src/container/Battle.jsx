@@ -92,26 +92,22 @@ function Battle() {
   //   console.log("bowling:", select === "batting" ? tossLoser : battingTeam);
   // };
 
-
   const handleChoose = (select) => {
-    setChoose(select);
+  if (!tossWinnerStatus || !tossLoser) return;
 
-    const winner = tossWinnerStatus;
-    const loser = winner === team1 ? team2 : team1;
+  setChoose(select);
 
-    if (select === "batting") {
-      setBattingTeam(winner);
-      setLTossLoser(loser);
-    } else {
-      setBattingTeam(loser);
-      setLTossLoser(winner);
-    }
+  if (select === "batting") {
+    setBattingTeam(tossWinnerStatus); // explicitly use toss winner
+    setLTossLoser(tossLoser);         // explicitly use toss loser
+  } else if (select === "bowling") {
+    setBattingTeam(tossLoser);        // toss loser bats
+    setLTossLoser(tossWinnerStatus);  // toss winner bowls
+  }
 
-    console.log("Batting:", select === "batting" ? winner : loser);
-    console.log("Bowling:", select === "batting" ? loser : winner);
-  };
-
-
+  console.log("Batting Team:", select === "batting" ? tossWinnerStatus : tossLoser);
+  console.log("Bowling Team:", select === "batting" ? tossLoser : tossWinnerStatus);
+};
 
   const shuffledCards = (array) => {
     return [...array].sort(() => Math.random() - 0.5)
@@ -121,13 +117,13 @@ function Battle() {
 
     setIsClickable(false);
 
-    if (item.type === "run") {
-      speakText(`${item.value} runs`)
-    } else if (item.type === "wicket") {
-      speakText(`${item.label}`)
-    } else if (item.type === "extra") {
-      speakText(`${item.label}`)
-    }
+     if (item.type === "run") {
+            speakText(`${item.value} runs`)
+        } else if (item.type === "wicket") {
+            speakText(`${item.label}`)
+        } else if (item.type === "extra") {
+            speakText(`${item.label}`)
+        }
     setScore((prev) => {
       let newRun = prev.runs;
       let newWicket = prev.wickets;
@@ -176,9 +172,7 @@ function Battle() {
             newOver = 0;
             setChasing(true);
             // alert(`${battingTeam}’s innings is over. Now it’s the other team’s turn to bat.`);
-            // setBattingTeam(prevT => prevT === team1 ? team2 : team1);
-            const nextTeam = battingTeam === team1 ? team2 : team1;
-            setBattingTeam(nextTeam);
+            setBattingTeam(prevT => prevT === team1 ? team2 : team1);
             setShowChaseInfo(false);
             setTimeout(() => {
               setShowInningsPopup(true);
