@@ -173,8 +173,12 @@ function Battle() {
             setChasing(true);
             // alert(`${battingTeam}’s innings is over. Now it’s the other team’s turn to bat.`);
             // setBattingTeam(prevT => prevT === team1 ? team2 : team1);
-            setBattingTeam(battingTeam === team1 ? team2 : team1);
-            setLTossLoser(battingTeam === team1 ? team1 : team2);
+            setBattingTeam(prevT => {
+              const currentTeam1 = team1;
+              const currentTeam2 = team2;
+              return prevT === currentTeam1 ? currentTeam2 : currentTeam1;
+            });
+
             setShowChaseInfo(false);
             setTimeout(() => {
               setShowInningsPopup(true);
