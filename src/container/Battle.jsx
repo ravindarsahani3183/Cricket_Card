@@ -143,7 +143,7 @@ function Battle() {
 
       if (!isGameOver) {
         // If not yet terminated by target, check the normal ending conditions
-        if (newWicket >= 10 || newOver >= 1) {
+        if (newWicket >= 10 || newOver >= 5) {
           if (!firstInningsOver) {
             // End of first innings
             setFirstInningsOver(true);
@@ -435,7 +435,7 @@ function Battle() {
                   setShowInningsPopup(false);
                   setShowChaseInfo(true);
                 }}
-                className="mt-2 sm:mt-4 bg-green-500 text-white font-medium px-5 sm:px-6 py-1.5 sm:py-2 rounded-lg shadow-md transition-all duration-300 hover:shadow-lg hover:bg-green-600 active:scale-95"
+                className="mt-2 sm:mt-4 bg-green-500 text-white cursor-pointer font-medium px-5 sm:px-6 py-1.5 sm:py-2 rounded-lg shadow-md transition-all duration-300 hover:shadow-lg hover:bg-green-600 active:scale-95"
               >
                 OK
               </button>

@@ -160,7 +160,7 @@ function Toss({ match, onMatchComplete }) {
                         newOver = 0;
                         setChasing(true);
                         // alert(`${tossWinningTeam}’s innings is over. Now it’s the other team’s turn to bat.`);
-                        setTossWinningTeam(prevT => prevT === team[0] ? team[1] : team[0]);
+                        // setTossWinningTeam(prevT => prevT === team[0] ? team[1] : team[0]);
                         // gameOver remains false
                         setTimeout(() => {
                             setShowInningsPopup(true);
