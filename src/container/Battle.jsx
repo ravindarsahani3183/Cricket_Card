@@ -245,7 +245,7 @@ function Battle() {
                 <p className="text-sm font-medium">{!firstInningsOver ? `${score.overs}.${score.balls}` : `${team1Score.overs}.${team1Score.balls}`}</p>
               </div>
             </div>
-            <div className="col-span-2 order-3 md:order-2 mt-3 md:mt-0">
+            <div className="col-span-2 order-3 md:order-2 md:mt-0">
               {
                 !firstInningsOver && !gameOver && (
                   <h2 className="md:text-[15px] text-xs mt-0 md:mt-2 flex justify-center">This match is of  <span className="text-red-600 font-meduim mx-1">2</span> Overs and  <span className="text-red-600 font-meduim mx-1">5</span> Wickets for each team.</h2>
