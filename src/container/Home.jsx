@@ -81,8 +81,8 @@ function Home() {
             Out cards (Catch, Bowled, Run Out, Hit Wicket, LBW) cost you a
             wicket
           </li>
-          <li>Game ends when you lose 10 wickets or run out of cards</li>
-          <li>The match is limited to 5 overs.</li>
+          <li>Game ends when you lose 5 wickets or run out of cards</li>
+          <li>The match is limited to 2 overs.</li>
           <li>Try to score as many runs as possible!</li>
           <li>In case of a tie, the toss winner will be declared the winner of the match.</li>
         </ul>

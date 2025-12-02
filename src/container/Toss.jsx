@@ -148,7 +148,7 @@ function Toss({ match, onMatchComplete }) {
 
             if (!isGameOver) {
                 // If not yet terminated by target, check the normal ending conditions
-                if (newWicket >= 10 || newOver >= 2) {
+                if (newWicket >= 5 || newOver >= 2) {
                     if (!firstInningsOver) {
                         // End of first innings
                         setFirstInningsOver(true);
@@ -232,9 +232,14 @@ function Toss({ match, onMatchComplete }) {
                             </div>
                         </div>
                         <div className="col-span-2 order-3 md:order-2">
+                            {
+                                !firstInningsOver && !gameOver && (
+                                    <h2 className="md:text-[15px] text-xs md:mt-2 flex justify-center">This match is of  <span className="text-red-600 font-meduim mx-1">2</span> Overs and  <span className="text-red-600 font-meduim mx-1">5</span> Wickets for each team.</h2>
+                                )
+                            }
                             {firstInningsOver && !gameOver && showChaseInfo && (
                                 <div className="flex justify-center items-center">
-                                    <h2 className="md:text-base text-xs mx-5 mt-2">{tossLosserTeam} needs {(team1Score?.runs + 1) - score.runs} run from {(30 - (score.overs * 6 + score.balls))} balls to win </h2>
+                                    <h2 className="md:text-base text-xs mx-5 mt-2">{tossLosserTeam} needs <span className="text-green-500 font-medium">{(team1Score?.runs + 1) - score.runs}</span> run from <span className="text-red-500 font-medium">{(12 - (score.overs * 6 + score.balls))}</span> balls to win </h2>
                                 </div>
                             )}
                         </div>
