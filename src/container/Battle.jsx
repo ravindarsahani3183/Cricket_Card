@@ -248,11 +248,11 @@ function Battle() {
             <div className="col-span-2 order-3 md:order-2 mt-3 md:mt-0">
               {
                 !firstInningsOver && !gameOver && (
-                  <h2 className="md:text-[15px] text-xs md:mt-2 flex justify-center">This match is of  <span className="text-red-600 font-meduim mx-1">2</span> Overs and  <span className="text-red-600 font-meduim mx-1">5</span> Wickets for each team.</h2>
+                  <h2 className="md:text-[15px] text-xs mt-0 md:mt-2 flex justify-center">This match is of  <span className="text-red-600 font-meduim mx-1">2</span> Overs and  <span className="text-red-600 font-meduim mx-1">5</span> Wickets for each team.</h2>
                 )
               }
               {firstInningsOver && !gameOver && showChaseInfo && (
-                <div className="flex justify-center items-center mt-2">
+                <div className="flex justify-center items-center mt-0 md:mt-2">
                   <h2 className="md:text-base text-xs mx-5">
                     {tossLoser} needs <span className="text-green-500 font-medium">{(team1Score?.runs + 1) - score.runs}</span> run from <span className="text-red-500 font-medium">{(12 - (score.overs * 6 + score.balls))}</span> balls to win
                   </h2>
