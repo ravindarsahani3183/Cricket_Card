@@ -139,7 +139,7 @@ function SeriesMatch({ match, onMatchComplete }) {
       }
 
       if (!isGameOver) {
-        if (newWicket >= 10 || newOver >= 5) {
+        if (newWicket >= 10 || newOver >= 2) {
           if (!firstInningsOver) {
             setFirstInningsOver(true);
             setTeam1Score({ runs: newRun, wickets: newWicket, overs: newOver, balls: newBall });

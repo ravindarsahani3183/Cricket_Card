@@ -148,7 +148,7 @@ function Toss({ match, onMatchComplete }) {
 
             if (!isGameOver) {
                 // If not yet terminated by target, check the normal ending conditions
-                if (newWicket >= 10 || newOver >= 5) {
+                if (newWicket >= 10 || newOver >= 2) {
                     if (!firstInningsOver) {
                         // End of first innings
                         setFirstInningsOver(true);

@@ -100,13 +100,13 @@ function Battle() {
 
     setIsClickable(false);
 
-     if (item.type === "run") {
-            speakText(`${item.value} runs`)
-        } else if (item.type === "wicket") {
-            speakText(`${item.label}`)
-        } else if (item.type === "extra") {
-            speakText(`${item.label}`)
-        }
+    if (item.type === "run") {
+      speakText(`${item.value} runs`)
+    } else if (item.type === "wicket") {
+      speakText(`${item.label}`)
+    } else if (item.type === "extra") {
+      speakText(`${item.label}`)
+    }
     setScore((prev) => {
       let newRun = prev.runs;
       let newWicket = prev.wickets;
@@ -143,7 +143,7 @@ function Battle() {
 
       if (!isGameOver) {
         // If not yet terminated by target, check the normal ending conditions
-        if (newWicket >= 10 || newOver >= 5) {
+        if (newWicket >= 10 || newOver >= 2) {
           if (!firstInningsOver) {
             // End of first innings
             setFirstInningsOver(true);
@@ -402,7 +402,7 @@ function Battle() {
                 </li>
                 <li className="flex items-start sm:items-center gap-2">
                   <span className="w-2 h-2 bg-green-600 rounded-full mt-2 sm:mt-0"></span>
-                  The two teams play a match against each other.
+                  The two teams play a match against each other with 2 overs each.
                 </li>
                 <li className="flex items-start sm:items-center gap-2">
                   <span className="w-2 h-2 bg-green-600 rounded-full mt-2 sm:mt-0"></span>
